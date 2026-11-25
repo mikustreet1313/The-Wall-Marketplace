@@ -175,4 +175,116 @@ $('#creatorForm').addEventListener('submit',e=>{e.preventDefault();const profile
 $('#customerForm').addEventListener('submit',e=>{e.preventDefault();const profile={role:'CUSTOMER',name:$('#customerName').value,email:$('#customerEmail').value,categories:customerCats,location:$('#customerLocation').value,createdAt:new Date().toISOString()};localStorage.setItem('thewall_customer_profile',JSON.stringify(profile));$('#savedMessage').textContent='Preferencias guardadas en este dispositivo. La exploración pública estará disponible al conectar la base de datos.';$('#savedMessage').classList.remove('hidden')});
 $('#locateBtn').addEventListener('click',()=>{const s=$('#locationStatus');if(!navigator.geolocation){s.textContent='Tu navegador no permite obtener la ubicación. Escribe tu ciudad manualmente.';return}s.textContent='Esperando permiso de ubicación…';navigator.geolocation.getCurrentPosition(pos=>{s.textContent='Ubicación detectada. Añade el nombre de tu ciudad si quieres afinar la búsqueda.';$('#customerLocation').value=`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`},()=>{s.textContent='No se pudo acceder a la ubicación. Puedes escribir tu ciudad manualmente.'},{enableHighAccuracy:false,timeout:10000})});
 </script>
+<section id="my-wall" class="my-wall">
+  <div class="my-wall-header">
+    <span>THE WALL !</span>
+    <h2>MY WALL</h2>
+    <p>Your creative space. Your rules.</p>
+  </div>
+
+  <div class="my-wall-profile">
+    <div class="profile-avatar">+</div>
+    <div>
+      <h3>MY PROFILE</h3>
+      <p>Tell the world who you are.</p>
+      <button onclick="alert('Profile editing coming soon!')">
+        EDIT PROFILE
+      </button>
+    </div>
+  </div>
+
+  <div class="my-wall-grid">
+    <div class="my-wall-card">
+      <h3>MY CREATIONS</h3>
+      <p>Your published work.</p>
+    </div>
+
+    <div class="my-wall-card">
+      <h3>MY FAVORITES</h3>
+      <p>Your favorite creators.</p>
+    </div>
+
+    <div class="my-wall-card">
+      <h3>MY MESSAGES</h3>
+      <p>Your conversations.</p>
+    </div>
+
+    <div class="my-wall-card">
+      <h3>SETTINGS</h3>
+      <p>Manage your account.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+.my-wall {
+  padding: 70px 7%;
+  background: #f2f0e9;
+  color: #111;
+  font-family: Arial, sans-serif;
+}
+
+.my-wall-header {
+  margin-bottom: 45px;
+}
+
+.my-wall-header h2 {
+  font-family: Impact, sans-serif;
+  font-size: 65px;
+  margin: 10px 0;
+}
+
+.my-wall-profile {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 30px;
+  border: 2px solid #111;
+  margin-bottom: 30px;
+}
+
+.profile-avatar {
+  width: 85px;
+  height: 85px;
+  border: 2px solid #111;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 40px;
+}
+
+.my-wall button {
+  background: #111;
+  color: white;
+  padding: 12px 22px;
+  border: 0;
+  cursor: pointer;
+}
+
+.my-wall-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.my-wall-card {
+  border: 2px solid #111;
+  padding: 30px;
+  min-height: 130px;
+}
+
+.my-wall-card h3 {
+  font-family: Impact, sans-serif;
+}
+
+@media(max-width:600px) {
+  .my-wall-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .my-wall-header h2 {
+    font-size: 48px;
+  }
+}
+</style>
 </body></html>
