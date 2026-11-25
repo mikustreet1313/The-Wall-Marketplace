@@ -612,4 +612,165 @@ select:focus {
 
 </style>
 
+<style id="the-wall-editorial-final">
+
+/* THE WALL ! — EDITORIAL DESIGN */
+
+:root {
+  --wall-black: #111111;
+  --wall-white: #ffffff;
+  --wall-grey: #999999;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--wall-white) !important;
+  color: var(--wall-black) !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  margin: 0;
+}
+
+/* CLEAN INTERFACE */
+
+section,
+.account-area,
+.my-wall {
+  background: #fff !important;
+  color: #111 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* TYPOGRAPHY */
+
+h1, h2, h3, h4 {
+  color: #111 !important;
+  font-weight: 600 !important;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+}
+
+p {
+  line-height: 1.6;
+}
+
+/* TEXT NAVIGATION */
+
+a, button, label {
+  color: #111 !important;
+  cursor: pointer;
+  transition: transform .25s ease,
+              opacity .25s ease;
+}
+
+a:hover, button:hover, label:hover {
+  transform: scale(1.045);
+  opacity: .7;
+}
+
+/* REMOVE TRADITIONAL BUTTON LOOK */
+
+button {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  padding: 14px 0 !important;
+}
+
+/* INPUTS */
+
+input:not([type="radio"]):not([type="checkbox"]),
+textarea,
+select {
+  background: white !important;
+  color: #111 !important;
+  border: none !important;
+  border-bottom: 1px solid #ccc !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 14px 4px !important;
+  font-size: 16px;
+  width: 100%;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-bottom: 2px solid #111 !important;
+}
+
+/* MY WALL */
+
+.my-wall {
+  padding: 35px 20px !important;
+  border-top: 1px solid #eee !important;
+}
+
+.vision-option {
+  display: block;
+  background: white !important;
+  color: #111 !important;
+  border: none !important;
+  border-bottom: 1px solid #eee !important;
+  padding: 17px 0 !important;
+  font-size: 17px;
+  transition: transform .25s ease;
+}
+
+.vision-option:hover {
+  transform: scale(1.025);
+}
+
+.vision-option:has(input:checked) {
+  background: white !important;
+  border-color: #111 !important;
+  font-weight: bold;
+}
+
+/* MEDIA */
+
+img, video {
+  max-width: 100%;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+  body {
+    font-size: 16px;
+  }
+
+  h1 {
+    font-size: 38px;
+  }
+
+  h2 {
+    font-size: 30px;
+  }
+
+  section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+/* ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+</style>
+
 </html>
