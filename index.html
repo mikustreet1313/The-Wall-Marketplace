@@ -276,4 +276,198 @@ alert("¡Tu perfil CREATOR está guardado!");
 
 <style> .account-area { background: #171717; color: white; padding: 35px 22px; margin-top: 20px; } .account-area h2 { font-size: 30px; } .account-area input, .account-area select { display: block; width: 100%; padding: 14px; margin: 12px 0; border: 1px solid #ccc; font-size: 16px; } .account-area button { background: #ff6047; color: white; border: 0; padding: 15px 22px; font-weight: bold; cursor: pointer; } </style> <section class="account-area" id="join"> <h2>JOIN THE WALL !</h2> <p>Crea tu espacio. Comparte tu mundo.</p> <form id="registerForm"> <input id="userName" type="text" placeholder="Tu nombre o nombre artístico" required> <input id="userEmail" type="email" placeholder="Tu correo electrónico" required> <select id="userRole" required> <option value="">¿Qué buscas en THE WALL?</option> <option value="CREATOR">Soy artista o vendedor</option> <option value="CUSTOMER">Quiero descubrir y comprar</option> </select> <button type="submit">CREAR MI CUENTA ↗</button> </form> <p id="registerMessage"></p> </section> <script> document.getElementById("registerForm") .addEventListener("submit", function(e) { e.preventDefault(); const user = { name: document.getElementById("userName").value, email: document.getElementById("userEmail").value, role: document.getElementById("userRole").value }; localStorage.setItem("theWallUser", JSON.stringify(user)); document.getElementById("registerMessage").textContent = "¡Bienvenido a THE WALL ! Tu perfil de prueba está creado."; this.reset(); }); </script>
 
+<style>
+.my-wall {
+  background: #101010;
+  color: white;
+  padding: 30px 20px;
+  margin-top: 25px;
+  border-top: 3px solid #ff6047;
+}
+.my-wall h2 {
+  font-size: 30px;
+  margin-bottom: 5px;
+}
+.my-wall .intro {
+  color: #aaa;
+  margin-bottom: 22px;
+}
+.vision-option {
+  display: block;
+  background: #202020;
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px 0;
+  cursor: pointer;
+}
+.vision-option:has(input:checked) {
+  border: 2px solid #ff6047;
+  background: #30201d;
+}
+.vision-option input {
+  accent-color: #ff6047;
+  margin-right: 8px;
+}
+.my-wall textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 14px;
+  margin: 12px 0;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+.my-wall button {
+  background: #ff6047;
+  color: white;
+  border: 0;
+  padding: 15px 22px;
+  font-weight: bold;
+  width: 100%;
+  cursor: pointer;
+}
+</style>
+
+<section class="my-wall" id="myWall">
+  <h2>MY WALL !</h2>
+  <p class="intro">YOUR VISION. YOUR WORLD.</p>
+
+  <h3>Elige tu visión principal</h3>
+
+  <label class="vision-option">
+    <input type="radio" name="mainVision" value="THE STREET">
+    THE STREET — Mi barrio y mi comunidad
+  </label>
+
+  <label class="vision-option">
+    <input type="radio" name="mainVision" value="THE CITY">
+    THE CITY — Mi ciudad
+  </label>
+
+  <label class="vision-option">
+    <input type="radio" name="mainVision" value="THE NATIONAL">
+    THE NATIONAL — Mi país
+  </label>
+
+  <label class="vision-option">
+    <input type="radio" name="mainVision" value="THE WORLD">
+    THE WORLD — Proyección internacional
+  </label>
+
+  <label class="vision-option">
+    <input type="radio" name="mainVision" value="THE CULTURE">
+    THE CULTURE — Arte y cultura
+  </label>
+
+  <label class="vision-option">
+    <input type="radio" name="mainVision" value="THE DIGITAL">
+    THE DIGITAL — Comunidad online
+  </label>
+
+  <h3>Elige hasta dos visiones secundarias</h3>
+  <div id="secondaryVisions">
+    <label class="vision-option">
+      <input type="checkbox" name="secondaryVision" value="THE STREET">
+      THE STREET
+    </label>
+    <label class="vision-option">
+      <input type="checkbox" name="secondaryVision" value="THE CITY">
+      THE CITY
+    </label>
+    <label class="vision-option">
+      <input type="checkbox" name="secondaryVision" value="THE NATIONAL">
+      THE NATIONAL
+    </label>
+    <label class="vision-option">
+      <input type="checkbox" name="secondaryVision" value="THE WORLD">
+      THE WORLD
+    </label>
+    <label class="vision-option">
+      <input type="checkbox" name="secondaryVision" value="THE CULTURE">
+      THE CULTURE
+    </label>
+    <label class="vision-option">
+      <input type="checkbox" name="secondaryVision" value="THE DIGITAL">
+      THE DIGITAL
+    </label>
+  </div>
+
+  <h3>¿Dónde te gustaría ver tu creación dentro de cinco años?</h3>
+  <textarea id="visionDream" maxlength="500"
+    placeholder="Cuéntanos hacia dónde quieres llevar tu proyecto..."></textarea>
+
+  <button type="button" id="saveVision">
+    SAVE MY VISION ↗
+  </button>
+
+  <p id="visionMessage"></p>
+</section>
+
+<script>
+(function() {
+  const saved = JSON.parse(
+    localStorage.getItem("theWallVision") || "null"
+  );
+
+  const main = document.querySelectorAll(
+    'input[name="mainVision"]'
+  );
+  const secondary = document.querySelectorAll(
+    'input[name="secondaryVision"]'
+  );
+
+  if (saved) {
+    main.forEach(input => {
+      input.checked = input.value === saved.main;
+    });
+
+    secondary.forEach(input => {
+      input.checked = (saved.secondary || []).includes(input.value);
+    });
+
+    document.getElementById("visionDream").value =
+      saved.dream || "";
+  }
+
+  secondary.forEach(input => {
+    input.addEventListener("change", function() {
+      const selected = [...secondary].filter(i => i.checked);
+      if (selected.length > 2) {
+        this.checked = false;
+        alert("Puedes elegir máximo dos visiones secundarias.");
+      }
+    });
+  });
+
+  document.getElementById("saveVision")
+    .addEventListener("click", function() {
+      const mainSelected = [...main].find(i => i.checked);
+      const secondarySelected = [...secondary]
+        .filter(i => i.checked)
+        .map(i => i.value);
+
+      if (!mainSelected) {
+        alert("Elige primero tu visión principal.");
+        return;
+      }
+
+      if (secondarySelected.includes(mainSelected.value)) {
+        alert("La visión principal no puede repetirse como secundaria.");
+        return;
+      }
+
+      const data = {
+        main: mainSelected.value,
+        secondary: secondarySelected,
+        dream: document.getElementById("visionDream").value
+      };
+
+      localStorage.setItem("theWallVision", JSON.stringify(data));
+
+      document.getElementById("visionMessage").textContent =
+        "¡Tu visión ya forma parte de THE WALL !";
+    });
+})();
+</script>
+
 </html>
