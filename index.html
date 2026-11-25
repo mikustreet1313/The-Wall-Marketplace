@@ -210,6 +210,70 @@
     AN INDEPENDENT CREATIVE SPACE.
   </footer>
 </body>
+
+<section id="creatorProfile" style="display:none;background:#171717;color:white;padding:30px 20px;margin-top:25px">
+<h2>YOUR WALL. YOUR ART.</h2>
+<p>Construye tu identidad artística.</p>
+
+<form id="creatorForm">
+<input id="creatorStage" placeholder="Nombre artístico" required>
+<input id="creatorSpecialty" placeholder="Especialidad (pintura, tattoo, moda...)" required>
+<textarea id="creatorBio" placeholder="Cuéntanos quién eres y qué haces" required></textarea>
+<input id="creatorPhoto" type="url" placeholder="URL de tu fotografía o logo">
+<input id="creatorInstagram" placeholder="Instagram (tu usuario o enlace)">
+
+<button type="submit">GUARDAR MI PERFIL</button>
+</form>
+
+<div id="creatorPreview" style="margin-top:25px"></div>
+</section>
+
+<script>
+(function() {
+const user = JSON.parse(localStorage.getItem("theWallUser") || "null");
+const section = document.getElementById("creatorProfile");
+
+if (!user || user.role !== "CREATOR") return;
+
+section.style.display = "block";
+
+const form = document.getElementById("creatorForm");
+const saved = JSON.parse(localStorage.getItem("theWallCreator") || "{}");
+
+["Stage","Specialty","Bio","Photo","Instagram"].forEach(key => {
+const field = document.getElementById("creator" + key);
+if (saved[key.toLowerCase()]) field.value = saved[key.toLowerCase()];
+});
+
+function preview(data) {
+document.getElementById("creatorPreview").innerHTML =
+"<h2></h2><p></p><p></p>";
+const p = document.getElementById("creatorPreview");
+p.children[0].textContent = data.stage || "";
+p.children[1].textContent = data.specialty || "";
+p.children[2].textContent = data.bio || "";
+}
+
+if (saved.stage) preview(saved);
+
+form.addEventListener("submit", function(e) {
+e.preventDefault();
+
+const data = {
+stage: document.getElementById("creatorStage").value,
+specialty: document.getElementById("creatorSpecialty").value,
+bio: document.getElementById("creatorBio").value,
+photo: document.getElementById("creatorPhoto").value,
+instagram: document.getElementById("creatorInstagram").value
+};
+
+localStorage.setItem("theWallCreator", JSON.stringify(data));
+preview(data);
+alert("¡Tu perfil CREATOR está guardado!");
+});
+})();
+</script>
+
 <style> .account-area { background: #171717; color: white; padding: 35px 22px; margin-top: 20px; } .account-area h2 { font-size: 30px; } .account-area input, .account-area select { display: block; width: 100%; padding: 14px; margin: 12px 0; border: 1px solid #ccc; font-size: 16px; } .account-area button { background: #ff6047; color: white; border: 0; padding: 15px 22px; font-weight: bold; cursor: pointer; } </style> <section class="account-area" id="join"> <h2>JOIN THE WALL !</h2> <p>Crea tu espacio. Comparte tu mundo.</p> <form id="registerForm"> <input id="userName" type="text" placeholder="Tu nombre o nombre artístico" required> <input id="userEmail" type="email" placeholder="Tu correo electrónico" required> <select id="userRole" required> <option value="">¿Qué buscas en THE WALL?</option> <option value="CREATOR">Soy artista o vendedor</option> <option value="CUSTOMER">Quiero descubrir y comprar</option> </select> <button type="submit">CREAR MI CUENTA ↗</button> </form> <p id="registerMessage"></p> </section> <script> document.getElementById("registerForm") .addEventListener("submit", function(e) { e.preventDefault(); const user = { name: document.getElementById("userName").value, email: document.getElementById("userEmail").value, role: document.getElementById("userRole").value }; localStorage.setItem("theWallUser", JSON.stringify(user)); document.getElementById("registerMessage").textContent = "¡Bienvenido a THE WALL ! Tu perfil de prueba está creado."; this.reset(); }); </script>
 
 </html>
