@@ -1,1 +1,203 @@
 
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f2f0e9">
+  <title>THE WALL ! — Creative Marketplace</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #f2f0e9;
+      color: #171717;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    header {
+      height: 76px;
+      padding: 0 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #171717;
+      position: sticky;
+      top: 0;
+      background: #f2f0e9;
+      z-index: 5;
+    }
+    .logo {
+      font-family: Impact, sans-serif;
+      font-size: 29px;
+      letter-spacing: -1px;
+    }
+    .logo span { color: #ff6047; }
+    .icons { font-size: 23px; display: flex; gap: 20px; }
+    .hero {
+      margin: 18px;
+      min-height: 390px;
+      background: #202020;
+      color: white;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(0deg, #000b, transparent 80%),
+        url("https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=1200") center/cover;
+      opacity: .85;
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .tag {
+      display: inline-block;
+      background: #ff6047;
+      padding: 9px 15px;
+      letter-spacing: 3px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    h1 {
+      font-size: clamp(42px, 10vw, 76px);
+      line-height: .95;
+      margin: 20px 0;
+      letter-spacing: -3px;
+    }
+    .hero p { font-size: 15px; line-height: 1.5; }
+    .section-title {
+      padding: 18px 22px;
+      font-size: 23px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .grid {
+      padding: 0 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 13px;
+    }
+    .category {
+      min-height: 215px;
+      position: relative;
+      overflow: hidden;
+      background: #222;
+      color: white;
+      display: flex;
+      align-items: flex-end;
+      padding: 14px;
+    }
+    .category img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      inset: 0;
+      opacity: .76;
+      transition: transform .4s;
+    }
+    .category:hover img { transform: scale(1.06); }
+    .category h3 {
+      position: relative;
+      z-index: 1;
+      background: #f2f0e9;
+      color: #171717;
+      padding: 9px;
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+    .wide { grid-column: span 2; min-height: 270px; }
+    .intro {
+      padding: 55px 22px;
+      margin-top: 35px;
+      background: #ff6047;
+    }
+    .intro h2 { font-size: 38px; margin: 0 0 15px; }
+    .intro p { line-height: 1.6; max-width: 500px; }
+    .join {
+      display: inline-block;
+      background: #171717;
+      color: white;
+      text-decoration: none;
+      padding: 15px 20px;
+      margin-top: 15px;
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+    footer {
+      background: #171717;
+      color: white;
+      padding: 35px 22px;
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+    @media(min-width:700px) {
+      .hero { min-height: 570px; margin: 28px; }
+      .grid { grid-template-columns: repeat(3, 1fr); padding: 0 28px; }
+      .wide { grid-column: span 1; min-height: 215px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">THE WALL <span>!</span></div>
+    <div class="icons">⌕　♧　☰</div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <span class="tag">INDEPENDENT CULTURE</span>
+      <h1>YOUR WORLD.<br>YOUR WALL.</h1>
+      <p>Moda, arte y creatividad independiente.<br>Descubre a quienes crean algo diferente.</p>
+    </div>
+  </section>
+
+  <h2 class="section-title">EXPLORE THE WALL ↗</h2>
+
+  <section class="grid">
+    <article class="category wide">
+      <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=700" alt="Fashion">
+      <h3>01 — FASHION</h3>
+    </article>
+    <article class="category">
+      <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600" alt="Painting">
+      <h3>02 — PAINTING</h3>
+    </article>
+    <article class="category">
+      <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=600" alt="Sculpture">
+      <h3>03 — SCULPTURE</h3>
+    </article>
+    <article class="category">
+      <img src="https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=600" alt="Tattoo">
+      <h3>04 — TATTOO</h3>
+    </article>
+    <article class="category">
+      <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600" alt="Photography">
+      <h3>05 — PHOTOGRAPHY</h3>
+    </article>
+    <article class="category">
+      <img src="https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=600" alt="Handmade">
+      <h3>06 — HANDMADE</h3>
+    </article>
+  </section>
+
+  <section class="intro">
+    <h2>MAKE YOURSELF<br>VISIBLE.</h2>
+    <p>Tu talento merece un espacio. Comparte tus creaciones, muestra tu trabajo y conecta con una comunidad independiente.</p>
+    <a class="join" href="mailto:hello@thewall.example">JOIN THE WALL ↗</a>
+  </section>
+
+  <footer>
+    THE WALL !<br><br>
+    FASHION · ART · CULTURE · CREATORS<br><br>
+    AN INDEPENDENT CREATIVE SPACE.
+  </footer>
+</body>
+</html>
