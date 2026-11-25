@@ -1015,4 +1015,31 @@ a, button {
 
 </style>
 
+<style id="my-wall-interactions">
+/* Efecto al pasar el cursor o tocar */
+.my-wall .vision-option {
+  display: block;
+  transform-origin: left center;
+  transition: transform 0.25s ease, color 0.25s ease;
+  cursor: pointer;
+}
+
+/* Las letras crecen al pasar el cursor */
+.my-wall .vision-option:hover {
+  transform: scale(1.12);
+  color: #ff6a00;
+}
+
+/* La opción seleccionada se queda naranja */
+.my-wall .vision-option:has(input:checked) {
+  color: #ff6a00;
+}
+
+/* Efecto al pulsar en móvil */
+.my-wall .vision-option:active {
+  transform: scale(1.12);
+  color: #ff6a00;
+}
+</style>
+
 </html>
