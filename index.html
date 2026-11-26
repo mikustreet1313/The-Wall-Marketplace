@@ -146,17 +146,21 @@
  </div>
 </section>
 </main>
-<footer class="footer"><div class="logo">THE WALL<span style="color:var(--orange)"> !</span></div><small>INDEPENDENT MINDS. SHARED WALLS. © 2026</small><a href="mailto:Thewallisfree@gmail.com">CONTACT ↗</a></footer>
 
+<footer class="footer"><div class="logo">THE WALL<span style="color:var(--orange)"> !</span></div><small>INDEPENDENT MINDS. SHARED WALLS. © 2026</small><a href="mailto:Thewallisfree@gmail.com">CONTACT ↗</a></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const $=s=>document.querySelector(s),;
-  const SUPABASE_URL = 'https://qefvmxppuqmximwlinla.supabase.co';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+const SUPABASE_URL = 'https://qefvmxppuqmximwlinla.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_taFYDEBZXdx6CIYXXJT7cA_LWFUTqG_';
+
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  console.log('THE WALL SUPABASE:', typeof supabaseClient);
 let role=null, mainVision='THE STREET', secondary=[], customerCats=[];
+
+let role=null, mainVision='THE STREET', secondary=[], customerCats=[];
+
 function showRoleChooser(){
   role=null;
   $('#roleChooser').classList.remove('hidden');
