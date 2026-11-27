@@ -122,26 +122,38 @@
       <button class="back-choice" type="button" data-back>← CAMBIAR DE ELECCIÓN</button>
       <div class="eyebrow form-eyebrow">CREATOR AREA / TU ESPACIO</div>
       <div class="field"><label for="creatorName">Your name / Artist name</label><input id="creatorName" required placeholder="¿Cómo te conoce el mundo?"></div>
-      <div class="field"><label for="creatorEmail">Email</label><input id="creatorEmail" type="email" required placeholder="tu@email.com"></div>
+      <div class="field"><label for="creatorEmail">Email</label><input id="creatorEmail" type="email" required autocomplete="email" placeholder="tu@email.com"></div>
+      <div class="field"><label for="creatorPassword">Password</label><input id="creatorPassword" type="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres"></div>
       <div class="field"><label for="creatorDiscipline">Main discipline</label><input id="creatorDiscipline" required placeholder="Ej. Tattoo, pintura, música..."></div>
       <div class="field"><label>Main vision · Where do you belong?</label><div class="choices" id="mainVisions"><button type="button" class="choice selected">THE STREET</button><button type="button" class="choice">THE CITY</button><button type="button" class="choice">THE NATIONAL</button><button type="button" class="choice">THE WORLD</button><button type="button" class="choice">THE CULTURE</button><button type="button" class="choice">THE DIGITAL</button></div></div>
       <div class="field"><label>Secondary visions · Choose up to 2</label><div class="choices" id="secondaryVisions"><button type="button" class="choice">THE STREET</button><button type="button" class="choice">THE CITY</button><button type="button" class="choice">THE NATIONAL</button><button type="button" class="choice">THE WORLD</button><button type="button" class="choice">THE CULTURE</button><button type="button" class="choice">THE DIGITAL</button></div></div>
       <div class="field"><label for="creatorFuture">Where do you see your project in 5 years?</label><textarea id="creatorFuture" placeholder="Describe the future you're building..."></textarea></div>
       <div class="form-actions"><button class="pill primary" type="submit">Create my profile ↗</button></div>
-      <p class="status">Demo: los datos se guardan únicamente en este dispositivo. El perfil todavía no es público ni visible para otros usuarios.</p>
+      <p class="status">¿Ya tienes cuenta? <button class="back-choice" type="button" data-show-login>INICIA SESIÓN ↗</button></p>
+      <p class="status" id="creatorStatus" aria-live="polite">Tu cuenta y perfil se guardarán de forma segura.</p>
     </form>
     <form id="customerForm" class="hidden">
       <button class="back-choice" type="button" data-back>← CAMBIAR DE ELECCIÓN</button>
       <div class="eyebrow form-eyebrow">CUSTOMER AREA / DESCUBRIR</div>
       <div class="field"><label for="customerName">Your name</label><input id="customerName" required placeholder="Tu nombre"></div>
-      <div class="field"><label for="customerEmail">Email</label><input id="customerEmail" type="email" required placeholder="tu@email.com"></div>
+      <div class="field"><label for="customerEmail">Email</label><input id="customerEmail" type="email" required autocomplete="email" placeholder="tu@email.com"></div>
+      <div class="field"><label for="customerPassword">Password</label><input id="customerPassword" type="password" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres"></div>
       <div class="field"><label>What do you want to discover?</label><div class="choices" id="customerCategories"><button type="button" class="choice">Fashion</button><button type="button" class="choice">Painting</button><button type="button" class="choice">Sculpture</button><button type="button" class="choice">Tattoo</button><button type="button" class="choice">Photography</button><button type="button" class="choice">Music</button><button type="button" class="choice">Dance</button><button type="button" class="choice">Digital art</button><button type="button" class="choice">Handmade</button><button type="button" class="choice">Other</button></div></div>
       <div class="field"><label for="customerLocation">Your city / location</label><input id="customerLocation" placeholder="Ej. Vitoria-Gasteiz"></div>
       <div class="form-actions"><button class="pill" type="button" id="locateBtn">Use my location ↗</button><button class="pill primary" type="submit">Start exploring ↗</button></div>
+      <p class="status">¿Ya tienes cuenta? <button class="back-choice" type="button" data-show-login>INICIA SESIÓN ↗</button></p>
+      <p class="status" id="customerStatus" aria-live="polite">Tus preferencias se guardarán en tu cuenta.</p>
       <p class="status" id="locationStatus">Puedes escribir tu ciudad manualmente. Solo se solicita ubicación si pulsas el botón.</p>
-      <p class="status">Demo: la búsqueda pública de creadores cercanos necesita una base de datos compartida, todavía no conectada.</p>
     </form>
     <div id="savedMessage" class="saved hidden" role="status"></div>
+    <form id="loginForm" class="hidden">
+      <button class="back-choice" type="button" id="backToRegister">← VOLVER AL REGISTRO</button>
+      <div class="eyebrow form-eyebrow">WELCOME BACK / INICIAR SESIÓN</div>
+      <div class="field"><label for="loginEmail">Email</label><input id="loginEmail" type="email" required autocomplete="email" placeholder="tu@email.com"></div>
+      <div class="field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Tu contraseña"></div>
+      <div class="form-actions"><button class="pill primary" type="submit">Log in ↗</button></div>
+      <p class="status" id="loginStatus" aria-live="polite"></p>
+    </form>
   </div>
  </div>
 </section>
@@ -165,6 +177,7 @@ function showRoleChooser(){
   $('#roleChooser').classList.remove('hidden');
   $('#creatorForm').classList.add('hidden');
   $('#customerForm').classList.add('hidden');
+  $('#loginForm').classList.add('hidden');
   $('#savedMessage').classList.add('hidden');
   $$('.role').forEach(b=>b.classList.remove('selected'));
 }
@@ -181,8 +194,108 @@ $('#mainVisions').addEventListener('click',e=>{const b=e.target.closest('.choice
 $('#secondaryVisions').addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const v=b.textContent;if(v===mainVision)return;if(secondary.includes(v))secondary=secondary.filter(x=>x!==v);else if(secondary.length<2)secondary.push(v);else {$('#savedMessage').textContent='Puedes elegir como máximo dos visiones secundarias.';$('#savedMessage').classList.remove('hidden')}$$('#secondaryVisions .choice').forEach(x=>x.classList.toggle('selected',secondary.includes(x.textContent)))});
 $('#customerCategories').addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const v=b.textContent;customerCats=customerCats.includes(v)?customerCats.filter(x=>x!==v):[...customerCats,v];b.classList.toggle('selected',customerCats.includes(v))});
 $$('#categoryList .cat').forEach(b=>b.addEventListener('click',()=>{$$('#categoryList .cat').forEach(x=>x.classList.toggle('active',x===b));$('#categoryFeedback').textContent=b.dataset.cat==='All creativity'?'Explora las disciplinas que forman THE WALL.':`Has seleccionado ${b.dataset.cat}. El directorio de creadores se activará cuando conectemos la base de datos.`}));
-$('#creatorForm').addEventListener('submit',e=>{e.preventDefault();const profile={role:'CREATOR',name:$('#creatorName').value,email:$('#creatorEmail').value,discipline:$('#creatorDiscipline').value,mainVision,secondaryVisions:secondary,fiveYearVision:$('#creatorFuture').value,createdAt:new Date().toISOString()};localStorage.setItem('thewall_creator_profile',JSON.stringify(profile));$('#savedMessage').textContent='Perfil de prueba guardado en este dispositivo. Todavía no es público ni está sincronizado con otros usuarios.';$('#savedMessage').classList.remove('hidden')});
-$('#customerForm').addEventListener('submit',e=>{e.preventDefault();const profile={role:'CUSTOMER',name:$('#customerName').value,email:$('#customerEmail').value,categories:customerCats,location:$('#customerLocation').value,createdAt:new Date().toISOString()};localStorage.setItem('thewall_customer_profile',JSON.stringify(profile));$('#savedMessage').textContent='Preferencias guardadas en este dispositivo. La exploración pública estará disponible al conectar la base de datos.';$('#savedMessage').classList.remove('hidden')});
+function showStatus(selector,message,isError=false){
+  const el=$(selector);
+  if(!el)return;
+  el.textContent=message;
+  el.style.color=isError?'#b42318':'';
+}
+function showMyWall(user){
+  const wall=$('#my-wall');
+  if(!user){wall.style.display='none';return;}
+  wall.style.display='block';
+  const name=user.user_metadata?.display_name || user.email || 'Creator';
+  $('#myWallWelcome').textContent=`Welcome, ${name}. Your creative space is ready.`;
+}
+function showLogin(){
+  $('#roleChooser').classList.add('hidden');
+  $('#creatorForm').classList.add('hidden');
+  $('#customerForm').classList.add('hidden');
+  $('#loginForm').classList.remove('hidden');
+  $('#savedMessage').classList.add('hidden');
+}
+$$('[data-show-login]').forEach(btn=>btn.addEventListener('click',showLogin));
+$('#backToRegister').addEventListener('click',showRoleChooser);
+
+$('#creatorForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const submit=e.submitter;
+  if(submit)submit.disabled=true;
+  showStatus('#creatorStatus','Creando tu cuenta…');
+  const name=$('#creatorName').value.trim();
+  const email=$('#creatorEmail').value.trim();
+  const password=$('#creatorPassword').value;
+  const discipline=$('#creatorDiscipline').value.trim();
+  const {data,error}=await supabaseClient.auth.signUp({
+    email,password,
+    options:{data:{
+      display_name:name,role:'CREATOR',discipline,
+      main_vision:mainVision,secondary_visions:secondary,
+      five_year_vision:$('#creatorFuture').value.trim()
+    }}
+  });
+  if(submit)submit.disabled=false;
+  if(error){showStatus('#creatorStatus',error.message,true);return;}
+  if(data.session){
+    showMyWall(data.user);
+    showStatus('#creatorStatus','¡Cuenta creada! Ya has iniciado sesión.');
+  }else{
+    showStatus('#creatorStatus','Cuenta creada. Revisa tu correo para confirmar el registro y después inicia sesión.');
+  }
+});
+
+$('#customerForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const submit=e.submitter;
+  if(submit)submit.disabled=true;
+  showStatus('#customerStatus','Creando tu cuenta…');
+  const name=$('#customerName').value.trim();
+  const email=$('#customerEmail').value.trim();
+  const password=$('#customerPassword').value;
+  const {data,error}=await supabaseClient.auth.signUp({
+    email,password,
+    options:{data:{
+      display_name:name,role:'CUSTOMER',
+      categories:customerCats,location:$('#customerLocation').value.trim()
+    }}
+  });
+  if(submit)submit.disabled=false;
+  if(error){showStatus('#customerStatus',error.message,true);return;}
+  if(data.session){
+    showMyWall(data.user);
+    showStatus('#customerStatus','¡Cuenta creada! Ya has iniciado sesión.');
+  }else{
+    showStatus('#customerStatus','Cuenta creada. Revisa tu correo para confirmar el registro y después inicia sesión.');
+  }
+});
+
+$('#loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const submit=e.submitter;
+  if(submit)submit.disabled=true;
+  showStatus('#loginStatus','Iniciando sesión…');
+  const {data,error}=await supabaseClient.auth.signInWithPassword({
+    email:$('#loginEmail').value.trim(),
+    password:$('#loginPassword').value
+  });
+  if(submit)submit.disabled=false;
+  if(error){showStatus('#loginStatus',error.message,true);return;}
+  showMyWall(data.user);
+  $('#loginForm').classList.add('hidden');
+  $('#savedMessage').textContent='Sesión iniciada correctamente.';
+  $('#savedMessage').classList.remove('hidden');
+});
+
+$('#logoutBtn').addEventListener('click',async()=>{
+  const {error}=await supabaseClient.auth.signOut();
+  if(error){alert(error.message);return;}
+  showMyWall(null);
+  showRoleChooser();
+  $('#join').scrollIntoView({behavior:'smooth'});
+});
+
+supabaseClient.auth.getSession().then(({data})=>showMyWall(data.session?.user||null));
+supabaseClient.auth.onAuthStateChange((_event,session)=>showMyWall(session?.user||null));
 $('#locateBtn').addEventListener('click',()=>{const s=$('#locationStatus');if(!navigator.geolocation){s.textContent='Tu navegador no permite obtener la ubicación. Escribe tu ciudad manualmente.';return}s.textContent='Esperando permiso de ubicación…';navigator.geolocation.getCurrentPosition(pos=>{s.textContent='Ubicación detectada. Añade el nombre de tu ciudad si quieres afinar la búsqueda.';$('#customerLocation').value=`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`},()=>{s.textContent='No se pudo acceder a la ubicación. Puedes escribir tu ciudad manualmente.'},{enableHighAccuracy:false,timeout:10000})});
 </script>
 <section id="my-wall" class="my-wall">
@@ -196,10 +309,11 @@ $('#locateBtn').addEventListener('click',()=>{const s=$('#locationStatus');if(!n
     <div class="profile-avatar">+</div>
     <div>
       <h3>MY PROFILE</h3>
-      <p>Tell the world who you are.</p>
-      <button onclick="alert('Profile editing coming soon!')">
+      <p id="myWallWelcome">Tell the world who you are.</p>
+      <button type="button" onclick="alert('Profile editing coming soon!')">
         EDIT PROFILE
       </button>
+      <button type="button" id="logoutBtn" style="margin-left:8px">LOG OUT</button>
     </div>
   </div>
 
@@ -228,6 +342,7 @@ $('#locateBtn').addEventListener('click',()=>{const s=$('#locationStatus');if(!n
 
 <style>
 .my-wall {
+  display: none;
   padding: 70px 7%;
   background: #f2f0e9;
   color: #111;
