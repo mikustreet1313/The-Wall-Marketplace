@@ -530,7 +530,7 @@ async function loadMyCreations(){
   if(error){list.textContent='No se pudieron cargar tus creaciones: '+error.message;return;}
   if(!data || !data.length){list.textContent='Aún no has publicado nada. Crea tu primera obra arriba.';return;}
   list.innerHTML='';
-  data.forEach(post=>{
+  for (const post of data) {
     const item=document.createElement('article');
     item.style.cssText='border-top:1px solid #aaa;padding:16px 0;margin-top:12px';
     const heading=document.createElement('h4'); heading.textContent=post.title;
@@ -545,7 +545,7 @@ async function loadMyCreations(){
       } else {const note=document.createElement('p');note.textContent='Archivo guardado de forma privada.';item.append(note);}
     }
     list.append(item);
-  });
+  }
 }
 
 $('#openCreationsBtn').addEventListener('click',async()=>{
