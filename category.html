@@ -64,7 +64,7 @@ function make(tag,cls,text){const el=document.createElement(tag);if(cls)el.class
 async function signedMedia(path){const {data,error}=await db.storage.from('wall media').createSignedUrl(path,3600);return error?null:data?.signedUrl||null}
 async function render(){
  try{
-  let query=db.from('wall_posts').select('id,title,content,category,media_url,created_at,visibility,scheduled_at').eq('visibility','PUBLIC').order('created_at',{ascending:false});
+  let query=db.from('wall_posts').select('id,title,content,category,media_url,created_at,visibility,scheduled_at').in('visibility',['PUBLIC','SCHEDULED']).order('created_at',{ascending:false});
   const {data,error}=await query;if(error)throw error;
   const rows=(data||[]).filter(p=>category==='All creativity'||(p.category||'').toLowerCase()===category.toLowerCase());
   if(!rows.length){status.textContent='Todavía no hay publicaciones públicas en esta categoría.';posts.append(make('div','empty','Esta sección ya está preparada. Cuando se publiquen obras de esta disciplina, aparecerán aquí.'));return}
