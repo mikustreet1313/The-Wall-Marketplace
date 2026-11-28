@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#f5f3ee">
+<title>THE WALL ! — Mi espacio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f5f3ee;--ink:#171717;--orange:#f15a24;--line:#d8d4cb;--muted:#777}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Manrope,Arial,sans-serif}a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}.mono,.eyebrow{font:10px 'DM Mono',monospace;letter-spacing:.12em;text-transform:uppercase}.topbar{height:66px;padding:0 5vw;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.logo{font:700 25px 'Space Grotesk';letter-spacing:-1.8px}.logo span,.accent{color:var(--orange)}.top-actions{display:flex;gap:22px;align-items:center}.top-actions button,.top-actions a{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;border:0;background:none}.top-actions button:hover,.top-actions a:hover{color:var(--orange)}main{max-width:1180px;margin:auto;padding:62px 5vw 90px}.eyebrow{color:var(--orange)}h1{font:700 clamp(46px,8vw,88px)/.9 'Space Grotesk';letter-spacing:-.085em;margin:16px 0 14px}h1 span{color:var(--orange)}.welcome{font-size:14px;color:#666;margin:0 0 48px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.tile{border:1px solid var(--line);padding:24px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;background:rgba(255,255,255,.18);transition:.2s}.tile:hover{border-color:var(--orange);transform:translateY(-2px)}.tile .num{font:10px 'DM Mono';color:var(--orange)}.tile h2{font:700 25px 'Space Grotesk';letter-spacing:-1px;margin:20px 0 7px}.tile p{font-size:12px;color:var(--muted);line-height:1.5;margin:0}.tile .arrow{align-self:flex-end;font-size:20px}.section{margin-top:62px;border-top:1px solid var(--ink);padding-top:20px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px}.section h2{font:700 30px 'Space Grotesk';letter-spacing:-1px;margin:0}.section-head p{font-size:11px;color:var(--muted);margin:5px 0 0}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}.stat{padding:18px;border:1px solid var(--line)}.stat strong{display:block;font:700 34px 'Space Grotesk'}.stat span{font:10px 'DM Mono';color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.post-list{margin-top:20px;border-top:1px solid var(--line)}.post{display:flex;justify-content:space-between;gap:20px;padding:16px 2px;border-bottom:1px solid var(--line);font-size:13px}.post small{color:var(--muted)}.empty{padding:22px 0;color:var(--muted);font-size:12px;line-height:1.6}.notice{font-size:11px;color:var(--muted);line-height:1.6;margin-top:30px;padding:16px;border-left:2px solid var(--orange)}.footer{border-top:1px solid var(--line);padding:25px 5vw;display:flex;justify-content:space-between;gap:20px;align-items:center}.footer small{font:9px 'DM Mono';letter-spacing:.1em;color:var(--muted)}.hidden{display:none!important}@media(max-width:760px){main{padding:48px 6vw 70px}.grid{grid-template-columns:1fr 1fr}.tile{min-height:160px;padding:18px}.tile h2{font-size:21px}.stats{grid-template-columns:1fr 1fr}.topbar{padding:0 6vw}.top-actions{gap:12px}}@media(max-width:480px){.grid{grid-template-columns:1fr}.top-actions a{display:none}.section-head{align-items:flex-start;flex-direction:column}.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header class="topbar"><a class="logo" href="index.html">THE WALL<span> !</span></a><nav class="top-actions"><a href="index.html">← Volver a THE WALL</a><button id="logoutBtn">Cerrar sesión ↗</button></nav></header>
+<main>
+<div class="eyebrow">THE WALL / CREATOR SPACE</div>
+<h1>YOUR SPACE.<br><span>YOUR WALL.</span></h1>
+<p class="welcome">Bienvenido/a a tu espacio de creador, <strong id="creatorName">creador</strong>.</p>
+<div class="grid">
+<a class="tile" href="#myCreations"><span class="num">01 / PORTFOLIO</span><div><h2>Mis creaciones</h2><p>Consulta las obras que has publicado en THE WALL.</p></div><span class="arrow">↗</span></a>
+<a class="tile" href="#publish"><span class="num">02 / NEW WORK</span><div><h2>Publicar obra</h2><p>Prepara una nueva creación para compartirla.</p></div><span class="arrow">↗</span></a>
+<a class="tile" href="#sales"><span class="num">03 / MARKET</span><div><h2>Mis ventas</h2><p>Un espacio para gestionar tus ventas y pedidos.</p></div><span class="arrow">↗</span></a>
+<a class="tile" href="#statistics"><span class="num">04 / INSIGHTS</span><div><h2>Estadísticas</h2><p>Consulta la actividad de tus publicaciones.</p></div><span class="arrow">↗</span></a>
+<a class="tile" href="#profile"><span class="num">05 / IDENTITY</span><div><h2>Mi perfil</h2><p>Tu identidad y presentación como creador.</p></div><span class="arrow">↗</span></a>
+<a class="tile" href="#writer"><span class="num">06 / WORDS</span><div><h2>Writer</h2><p>Tu futuro espacio para publicar literatura.</p></div><span class="arrow">↗</span></a>
+</div>
+<section class="section" id="statistics"><div class="section-head"><div><h2>Tu actividad</h2><p>Resumen de tus publicaciones.</p></div><span class="eyebrow">LIVE DATA</span></div><div class="stats"><div class="stat"><strong id="postCount">—</strong><span>Creaciones publicadas</span></div><div class="stat"><strong id="publicCount">—</strong><span>Publicaciones públicas</span></div><div class="stat"><strong id="accountStatus">Activa</strong><span>Estado de la cuenta</span></div></div></section>
+<section class="section" id="myCreations"><div class="section-head"><div><h2>Mis creaciones</h2><p>Tus publicaciones más recientes.</p></div></div><div id="postList" class="post-list"><p class="empty">Cargando tus publicaciones…</p></div></section>
+<section class="section" id="publish"><h2>Publicar obra</h2><p class="empty">El módulo de publicación se conectará aquí en el siguiente paso.</p></section>
+<section class="section" id="sales"><h2>Mis ventas</h2><p class="empty">El panel de ventas se habilitará cuando conectemos el flujo de compra y pagos.</p></section>
+<section class="section" id="profile"><h2>Mi perfil</h2><p class="empty">En el siguiente paso conectaremos aquí la edición de tu perfil público.</p></section>
+<section class="section" id="writer"><h2>Writer</h2><p class="empty">El espacio literario estará disponible cuando construyamos el módulo Writer.</p></section>
+<p class="notice">Este es el primer panel privado. Los apartados ya tienen su lugar, pero iremos conectando sus funciones paso a paso para no alterar lo que ya funciona.</p>
+</main>
+<footer class="footer"><a class="logo" href="index.html">THE WALL<span> !</span></a><small>INDEPENDENT MINDS. SHARED WALLS. © 2026</small><a class="top-actions" href="mailto:Thewallisfree@gmail.com">CONTACT ↗</a></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://qefvmxppuqmximwlinla.supabase.co';
+const SUPABASE_KEY='sb_publishable_taFYDEBZXdx6CIYXXJT7cA_LWFUTqG_';
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const el=id=>document.getElementById(id);
+(async()=>{
+ const {data:{session},error:sessionError}=await db.auth.getSession();
+ if(sessionError||!session){window.location.replace('creator.html');return;}
+ const user=session.user;const meta=user.user_metadata||{};
+ el('creatorName').textContent=meta.display_name||meta.full_name||user.email||'creador';
+ const {data:profile}=await db.from('profiles').select('display_name,role,discipline').eq('id',user.id).maybeSingle();
+ if(profile?.display_name)el('creatorName').textContent=profile.display_name;
+ if(profile?.role&&profile.role!=='CREATOR'){el('accountStatus').textContent='Revisar';}
+ const {data:posts,error}=await db.from('wall_posts').select('id,title,category,visibility,created_at').eq('creator_id',user.id).order('created_at',{ascending:false});
+ if(error){el('postList').innerHTML='<p class="empty">No se pudieron cargar tus publicaciones. '+error.message+'</p>';el('postCount').textContent='—';el('publicCount').textContent='—';return;}
+ const rows=posts||[];el('postCount').textContent=rows.length;el('publicCount').textContent=rows.filter(p=>p.visibility==='PUBLIC').length;
+ if(!rows.length){el('postList').innerHTML='<p class="empty">Todavía no has publicado ninguna creación. Cuando publiques tu primera obra, aparecerá aquí.</p>';return;}
+ el('postList').innerHTML=rows.map(p=>`<div class="post"><strong>${escapeHtml(p.title||'Sin título')}</strong><small>${escapeHtml(p.category||'Sin categoría')} · ${escapeHtml(p.visibility||'')}</small></div>`).join('');
+})();
+function escapeHtml(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+el('logoutBtn').addEventListener('click',async()=>{const {error}=await db.auth.signOut();if(!error)window.location.href='creator.html';else alert('No se pudo cerrar sesión: '+error.message);});
+</script>
+</body></html>
