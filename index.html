@@ -86,7 +86,7 @@
 <body>
 <header class="topbar">
   <a class="logo" href="#" aria-label="THE WALL inicio">THE WALL<span> !</span></a>
-  <nav class="nav"><a href="#wall">Explore</a><a href="#manifesto">Manifesto</a><a class="nav-cta" href="#join">Join the wall ↗</a></nav>
+  <nav class="nav"><a href="#wall">Explore</a><a href="#manifesto">Manifesto</a><a id="myWallNav" href="#my-wall" style="display:none">MY WALL</a><a class="nav-cta" href="#join">Join the wall ↗</a></nav>
 </header>
 <main>
 <section class="hero">
@@ -111,9 +111,9 @@
   </div>
   <div class="eyebrow" style="margin-top:36px">Choose your universe</div>
   <div class="categories" id="categoryList">
-    <button class="cat active" data-cat="All creativity">All creativity</button><button class="cat" data-cat="Fashion">Fashion</button><button class="cat" data-cat="Painting">Painting</button><button class="cat" data-cat="Sculpture">Sculpture</button><button class="cat" data-cat="Tattoo">Tattoo</button><button class="cat" data-cat="Photography">Photography</button><button class="cat" data-cat="Music">Music</button><button class="cat" data-cat="Dance">Dance</button><button class="cat" data-cat="Digital art">Digital art</button><button class="cat" data-cat="Handmade">Handmade</button><button class="cat" data-cat="Other">Other</button>
+    <a class="cat active" href="category.html?category=All%20creativity">All creativity</a><a class="cat" href="category.html?category=Fashion">Fashion</a><a class="cat" href="category.html?category=Painting">Painting</a><a class="cat" href="category.html?category=Sculpture">Sculpture</a><a class="cat" href="category.html?category=Tattoo">Tattoo</a><a class="cat" href="category.html?category=Photography">Photography</a><a class="cat" href="category.html?category=Music">Music</a><a class="cat" href="category.html?category=Dance">Dance</a><a class="cat" href="category.html?category=Digital%20art">Digital art</a><a class="cat" href="category.html?category=Handmade">Handmade</a><a class="cat" href="category.html?category=Other">Other</a>
   </div>
-  <p class="status" id="categoryFeedback">Explora las disciplinas que forman THE WALL.</p>
+  <p class="status" id="categoryFeedback">Entra en cada disciplina para descubrir sus publicaciones.</p>
 </section>
 
 <section class="section" id="publications">
@@ -370,19 +370,31 @@ $$('[data-back]').forEach(btn=>btn.addEventListener('click',showRoleChooser));
 $('#mainVisions').addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;mainVision=b.textContent;$$('#mainVisions .choice').forEach(x=>x.classList.toggle('selected',x===b));secondary=secondary.filter(x=>x!==mainVision);$$('#secondaryVisions .choice').forEach(x=>x.classList.toggle('selected',secondary.includes(x.textContent)))});
 $('#secondaryVisions').addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const v=b.textContent;if(v===mainVision)return;if(secondary.includes(v))secondary=secondary.filter(x=>x!==v);else if(secondary.length<2)secondary.push(v);else {$('#savedMessage').textContent='Puedes elegir como máximo dos visiones secundarias.';$('#savedMessage').classList.remove('hidden')}$$('#secondaryVisions .choice').forEach(x=>x.classList.toggle('selected',secondary.includes(x.textContent)))});
 $('#customerCategories').addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;const v=b.textContent;customerCats=customerCats.includes(v)?customerCats.filter(x=>x!==v):[...customerCats,v];b.classList.toggle('selected',customerCats.includes(v))});
-$$('#categoryList .cat').forEach(b=>b.addEventListener('click',()=>{$$('#categoryList .cat').forEach(x=>x.classList.toggle('active',x===b));$('#categoryFeedback').textContent=b.dataset.cat==='All creativity'?'Explora las disciplinas que forman THE WALL.':`Has seleccionado ${b.dataset.cat}. El directorio de creadores se activará cuando conectemos la base de datos.`}));
+
 function showStatus(selector,message,isError=false){
   const el=$(selector);
   if(!el)return;
   el.textContent=message;
   el.style.color=isError?'#b42318':'';
 }
-function showMyWall(user){
-  const wall=$('#my-wall');
-  if(!user){wall.style.display='none';return;}
+async function showMyWall(user){
+  const wall=$('#my-wall'), navLink=$('#myWallNav');
+  if(!user){wall.style.display='none';navLink.style.display='none';return;}
+  let accountRole=user.user_metadata?.role || null;
+  try{
+    const {data:profile}=await supabaseClient.from('profiles').select('role,display_name').eq('id',user.id).maybeSingle();
+    if(profile?.role)accountRole=String(profile.role).toUpperCase();
+    if(profile?.display_name)user.user_metadata.display_name=profile.display_name;
+  }catch(error){console.warn('No se pudo consultar el perfil:',error);}
+  if(!['CREATOR','CUSTOMER'].includes(String(accountRole||'').toUpperCase())){
+    wall.style.display='none';navLink.style.display='none';return;
+  }
+  navLink.style.display='inline';
   wall.style.display='block';
-  const name=user.user_metadata?.display_name || user.email || 'Creator';
-  $('#myWallWelcome').textContent=`Welcome, ${name}. Your creative space is ready.`;
+  const name=user.user_metadata?.display_name || user.email || 'Member';
+  $('#myWallWelcome').textContent=`Welcome, ${name}. Your ${accountRole==='CREATOR'?'creative':'discovery'} space is ready.`;
+  const creatorCard=$('#creatorToolsCard');
+  if(creatorCard)creatorCard.style.display=accountRole==='CREATOR'?'':'none';
 }
 function showLogin(){
   $('#roleChooser').classList.add('hidden');
