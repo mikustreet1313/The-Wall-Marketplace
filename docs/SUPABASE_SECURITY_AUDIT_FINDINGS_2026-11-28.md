@@ -25,23 +25,26 @@ The separate RLS-status export confirms RLS is enabled on `profiles`, `wall_post
 - The exported function definition shows `SECURITY DEFINER` enabled and `search_path = ''`.
 - The function uses schema-qualified references (`public.profiles`, `public.user_role`) and inserts the new user's id, display name, role and discipline.
 - It assigns `CREATOR` only when the submitted metadata role is exactly CREATOR (case-insensitive); otherwise it assigns `CUSTOMER`. It does not assign ADMIN from metadata.
-- This is a sound baseline pattern, but function ownership and EXECUTE grants were not included in the export and still need review.
+- The owner is `postgres`; the exported explicit ACL (`proacl`) is NULL.
+- The effective privilege check reports EXECUTE = true for `anon`, `authenticated`, `postgres`, `service_role`, and `supabase_auth_admin`.
+- This result is consistent with default function EXECUTE privileges being available broadly (often via PUBLIC), but the CSV alone does not identify which ACL path grants it. Because this is a trigger-only function, ordinary direct RPC invocation should fail with PostgreSQL's trigger-function-only restriction; nevertheless, broad EXECUTE grants should be narrowed after checking the trigger's creation/ownership context and confirming the registration trigger still works. Do not revoke privileges blindly.
 
 ## Important limits of these exports
 
 - They do not show effective inherited/schema-level privileges or default privileges.
 - They do not inspect actual `media_url` values or prove that a private file is currently readable.
-- They do not include the owner and ACL/EXECUTE grants for `handle_new_user()`.
+- They do not show the exact ACL source granting EXECUTE (PUBLIC, role grant, or membership).
 - They are point-in-time exports; they are not a live connection.
 
 ## Safe next checks
 
-1. Inspect `handle_new_user()` owner and EXECUTE grants.
-2. Inspect sample `wall_post_media.media_url` values (paths only; no personal data) and compare with `storage.objects.name`.
-3. Test anonymous access to a private-post media object in a controlled test post.
-4. Review and prepare narrowly scoped changes for storage visibility and account-status enforcement.
-5. Review effective grants and default privileges before revoking unnecessary API-role privileges.
-6. Only after review, apply migrations in a controlled sequence and retest public media, private posts, profile editing, creator uploads, likes, and saved posts.
+1. Inspect the ACL entries for `handle_new_user()` including PUBLIC and inspect default privileges for functions in `public`.
+2. Confirm the trigger owner/creation context and test a new test-account registration after any eventual EXECUTE privilege change.
+3. Inspect sample `wall_post_media.media_url` values (paths only; no personal data) and compare with `storage.objects.name`.
+4. Test anonymous access to a private-post media object in a controlled test post.
+5. Review and prepare narrowly scoped changes for storage visibility and account-status enforcement.
+6. Review effective grants and default privileges before revoking unnecessary API-role privileges.
+7. Only after review, apply migrations in a controlled sequence and retest public media, private posts, profile editing, creator uploads, likes, and saved posts.
 
 ## Safety status
 
