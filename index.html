@@ -196,14 +196,20 @@
   </div>
 
   <div class="my-wall-profile">
-    <div class="profile-avatar">+</div>
-    <div>
+    <div class="profile-avatar" id="profileAvatar"><span>+</span></div>
+    <div class="profile-details">
       <h3>MY PROFILE</h3>
       <p id="myWallWelcome">Tell the world who you are.</p>
-      <button type="button" onclick="alert('Profile editing coming soon!')">
-        EDIT PROFILE
-      </button>
+      <p id="myWallBio" class="profile-bio">Your profile description will appear here.</p>
+      <button type="button" id="editProfileBtn">EDIT PROFILE</button>
       <button type="button" id="logoutBtn" style="margin-left:8px">LOG OUT</button>
+      <form id="myProfileForm" class="hidden" style="margin-top:20px;max-width:520px">
+        <div class="field"><label for="profileDisplayName">NAME</label><input id="profileDisplayName" maxlength="80" required></div>
+        <div class="field"><label for="profileBioInput">BIO / DESCRIPTION</label><textarea id="profileBioInput" maxlength="500" placeholder="Tell people a little about yourself"></textarea></div>
+        <div class="field"><label for="profileAvatarFile">PROFILE PHOTO (MAX 5 MB)</label><input id="profileAvatarFile" type="file" accept="image/*"><p class="media-help">Puedes cambiar tu foto cuando quieras. Solo se aceptan imágenes de hasta 5 MB.</p></div>
+        <div class="form-actions"><button type="submit" id="saveProfileBtn">SAVE PROFILE ↗</button><button type="button" id="cancelProfileBtn">CANCEL</button></div>
+        <p id="profileStatus" class="status" aria-live="polite"></p>
+      </form>
     </div>
   </div>
 
@@ -292,14 +298,26 @@
 }
 
 .profile-avatar {
-  width: 85px;
-  height: 85px;
+  width: 100px;
+  height: 100px;
+  flex: 0 0 100px;
   border: 2px solid #111;
   border-radius: 50%;
   display: grid;
   place-items: center;
+  overflow: hidden;
   font-size: 40px;
+  background: #e8e4da;
 }
+.profile-avatar img{width:100%;height:100%;object-fit:cover}
+.profile-details{min-width:0;flex:1}
+.profile-bio{font-size:13px;line-height:1.5;max-width:560px;white-space:pre-wrap}
+#myProfileForm .field{margin:12px 0}
+#myProfileForm input,#myProfileForm textarea{width:100%;max-width:100%;padding:10px 4px;border:0;border-bottom:1px solid #aaa;background:transparent}
+#myProfileForm textarea{min-height:90px}
+#myProfileForm .form-actions{display:flex;gap:10px;flex-wrap:wrap}
+#myProfileForm .form-actions button{margin:0}
+@media(max-width:600px){.my-wall-profile{align-items:flex-start;flex-direction:column}.profile-avatar{width:86px;height:86px;flex-basis:86px}}
 
 .my-wall button {
   background: #111;
@@ -389,11 +407,97 @@ function showMyWall(user){
   navLogout.style.display='inline';
   wall.style.display='block';
   const name=user.user_metadata?.display_name || user.email || 'Member';
-  $('#myWallWelcome').textContent=`Welcome, ${name}. Your ${accountRole==='CREATOR'?'creative':'discovery'} space is ready.`;
+  $('#myWallWelcome').textContent=name;
+  $('#myWallBio').textContent='Your profile description will appear here.';
+  loadMyProfile(user);
   const creatorCard=$('#creatorToolsCard'), creatorPanel=$('#creationsPanel');
   if(creatorCard)creatorCard.style.display=accountRole==='CREATOR'?'':'none';
   if(creatorPanel&&accountRole!=='CREATOR')creatorPanel.style.display='none';
 }
+let myProfileUserId=null;
+let myProfileLoadedAvatarPath=null;
+
+async function loadMyProfile(user){
+  if(!user)return;
+  myProfileUserId=user.id;
+  const {data:profile,error}=await supabaseClient.from('profiles')
+    .select('display_name,bio,avatar_url')
+    .eq('id',user.id).maybeSingle();
+  if(error){
+    showStatus('#profileStatus','No se pudo cargar el perfil: '+error.message,true);
+  }
+  const metadata=user.user_metadata||{};
+  const displayName=profile?.display_name||metadata.display_name||user.email||'Member';
+  const bio=profile?.bio||'';
+  myProfileLoadedAvatarPath=profile?.avatar_url||null;
+  $('#myWallWelcome').textContent=displayName;
+  $('#myWallBio').textContent=bio||'Añade una descripción para que la comunidad te conozca.';
+  $('#profileDisplayName').value=displayName;
+  $('#profileBioInput').value=bio;
+  const avatar=$('#profileAvatar');
+  avatar.replaceChildren();
+  if(myProfileLoadedAvatarPath){
+    const {data:signed,error:signedError}=await supabaseClient.storage.from('wall media').createSignedUrl(myProfileLoadedAvatarPath,3600);
+    if(!signedError&&signed?.signedUrl){
+      const img=document.createElement('img');img.src=signed.signedUrl;img.alt='Profile photo';avatar.append(img);
+      return;
+    }
+  }
+  const initial=document.createElement('span');
+  initial.textContent=(displayName.trim()[0]||'+').toUpperCase();
+  avatar.append(initial);
+}
+
+$('#editProfileBtn').addEventListener('click',async()=>{
+  const form=$('#myProfileForm');
+  form.classList.toggle('hidden');
+  if(!form.classList.contains('hidden')){
+    const {data:{user}}=await supabaseClient.auth.getUser();
+    if(user)await loadMyProfile(user);
+  }
+});
+$('#cancelProfileBtn').addEventListener('click',()=>{$('#myProfileForm').classList.add('hidden');$('#profileStatus').textContent='';});
+$('#myProfileForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const submit=$('#saveProfileBtn');
+  const file=$('#profileAvatarFile').files[0];
+  const displayName=$('#profileDisplayName').value.trim();
+  const bio=$('#profileBioInput').value.trim();
+  submit.disabled=true;
+  showStatus('#profileStatus','Guardando tu perfil…');
+  let uploadedPath=null;
+  try{
+    const {data:{user},error:userError}=await supabaseClient.auth.getUser();
+    if(userError||!user)throw userError||new Error('Inicia sesión para editar tu perfil.');
+    if(!displayName)throw new Error('Escribe el nombre que quieres mostrar.');
+    if(file){
+      if(!file.type.startsWith('image/'))throw new Error('El archivo debe ser una imagen.');
+      if(file.size>5*1024*1024)throw new Error('La imagen supera el límite de 5 MB.');
+      const safeName=file.name.normalize('NFKD').replace(/[^a-zA-Z0-9._-]/g,'_').slice(-80);
+      uploadedPath=user.id+'/profile/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'-'+safeName;
+      const {error:uploadError}=await supabaseClient.storage.from('wall media').upload(uploadedPath,file,{upsert:false,contentType:file.type});
+      if(uploadError)throw uploadError;
+    }
+    const nextAvatarPath=uploadedPath||myProfileLoadedAvatarPath;
+    const {data:updated,error:updateError}=await supabaseClient.from('profiles')
+      .update({display_name:displayName,bio,avatar_url:nextAvatarPath})
+      .eq('id',user.id).select('id').maybeSingle();
+    if(updateError)throw updateError;
+    if(!updated)throw new Error('No se encontró tu perfil en la base de datos. No se han guardado los cambios.');
+    if(uploadedPath&&myProfileLoadedAvatarPath){
+      await supabaseClient.storage.from('wall media').remove([myProfileLoadedAvatarPath]);
+    }
+    myProfileLoadedAvatarPath=nextAvatarPath;
+    $('#myProfileForm').classList.add('hidden');
+    $('#profileAvatarFile').value='';
+    showStatus('#profileStatus','');
+    await loadMyProfile(user);
+  }catch(error){
+    if(uploadedPath)await supabaseClient.storage.from('wall media').remove([uploadedPath]);
+    showStatus('#profileStatus',error.message||'No se pudo guardar el perfil.',true);
+  }finally{submit.disabled=false;}
+});
+
 function showLogin(){
   $('#roleChooser').classList.add('hidden');
   $('#creatorForm').classList.add('hidden');
