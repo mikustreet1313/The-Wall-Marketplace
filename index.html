@@ -387,8 +387,9 @@ function showMyWall(user){
   wall.style.display='block';
   const name=user.user_metadata?.display_name || user.email || 'Member';
   $('#myWallWelcome').textContent=`Welcome, ${name}. Your ${accountRole==='CREATOR'?'creative':'discovery'} space is ready.`;
-  const creatorCard=$('#creatorToolsCard');
+  const creatorCard=$('#creatorToolsCard'), creatorPanel=$('#creationsPanel');
   if(creatorCard)creatorCard.style.display=accountRole==='CREATOR'?'':'none';
+  if(creatorPanel&&accountRole!=='CREATOR')creatorPanel.style.display='none';
 }
 function showLogin(){
   $('#roleChooser').classList.add('hidden');
