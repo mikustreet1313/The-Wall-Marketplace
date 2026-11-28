@@ -90,6 +90,28 @@ where trigger_schema = 'auth'
   and event_object_table = 'users'
 order by trigger_name;
 
+
+-- 7) Comprobar si ya existen las columnas necesarias para el cierre de creador.
+-- Esta consulta devuelve cero filas si aún no se ha aplicado la propuesta.
+select
+  column_name,
+  data_type,
+  is_nullable,
+  column_default
+from information_schema.columns
+where table_schema = 'public'
+  and table_name = 'profiles'
+  and column_name in ('account_status', 'closed_at')
+order by column_name;
+
+-- 8) Comprobar si existen restricciones de estado de cuenta.
+select
+  conname,
+  pg_get_constraintdef(oid) as definition
+from pg_constraint
+where conrelid = 'public.profiles'::regclass
+  and conname = 'profiles_account_status_check';
+
 -- Nota de seguridad:
 -- No crear políticas nuevas a ciegas. Primero comparar los resultados anteriores
 -- con docs/THE_WALL_PRODUCT_RULES.md y corregir únicamente las diferencias reales.
