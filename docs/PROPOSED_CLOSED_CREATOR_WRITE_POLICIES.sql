@@ -5,7 +5,7 @@
 
 begin;
 
--- wall_posts: los creadores cerrados no pueden insertar, actualizar ni borrar.
+-- wall_posts: las cuentas cerradas no pueden insertar, actualizar ni borrar; las políticas permisivas existentes siguen controlando rol y propiedad.
 drop policy if exists "active creators can insert own posts" on public.wall_posts;
 create policy "active creators can insert own posts"
 on public.wall_posts as restrictive
@@ -14,7 +14,6 @@ with check (
   exists (
     select 1 from public.profiles p
     where p.id = auth.uid()
-      and p.role = 'CREATOR'::public.user_role
       and p.account_status = 'ACTIVE'
   )
 );
@@ -27,7 +26,6 @@ using (
   exists (
     select 1 from public.profiles p
     where p.id = auth.uid()
-      and p.role = 'CREATOR'::public.user_role
       and p.account_status = 'ACTIVE'
   )
 )
@@ -35,7 +33,6 @@ with check (
   exists (
     select 1 from public.profiles p
     where p.id = auth.uid()
-      and p.role = 'CREATOR'::public.user_role
       and p.account_status = 'ACTIVE'
   )
 );
@@ -48,7 +45,6 @@ using (
   exists (
     select 1 from public.profiles p
     where p.id = auth.uid()
-      and p.role = 'CREATOR'::public.user_role
       and p.account_status = 'ACTIVE'
   )
 );
@@ -62,7 +58,6 @@ with check (
   exists (
     select 1 from public.profiles p
     where p.id = auth.uid()
-      and p.role = 'CREATOR'::public.user_role
       and p.account_status = 'ACTIVE'
   )
 );
@@ -75,7 +70,6 @@ using (
   exists (
     select 1 from public.profiles p
     where p.id = auth.uid()
-      and p.role = 'CREATOR'::public.user_role
       and p.account_status = 'ACTIVE'
   )
 )
@@ -83,7 +77,6 @@ with check (
   exists (
     select 1 from public.profiles p
     where p.id = auth.uid()
-      and p.role = 'CREATOR'::public.user_role
       and p.account_status = 'ACTIVE'
   )
 );
@@ -96,12 +89,11 @@ using (
   exists (
     select 1 from public.profiles p
     where p.id = auth.uid()
-      and p.role = 'CREATOR'::public.user_role
       and p.account_status = 'ACTIVE'
   )
 );
 
--- Storage: limitar escrituras del bucket privado wall media.
+-- Storage: impedir escrituras en el bucket privado wall media para cuentas cerradas. Las políticas permisivas existentes siguen controlando propiedad y rutas.
 drop policy if exists "active creators can upload wall media" on storage.objects;
 create policy "active creators can upload wall media"
 on storage.objects as restrictive
@@ -111,9 +103,7 @@ with check (
   or exists (
     select 1 from public.profiles p
     where p.id = auth.uid()
-      and p.role = 'CREATOR'::public.user_role
       and p.account_status = 'ACTIVE'
-      and (storage.foldername(name))[1] = auth.uid()::text
   )
 );
 
@@ -126,9 +116,7 @@ using (
   or exists (
     select 1 from public.profiles p
     where p.id = auth.uid()
-      and p.role = 'CREATOR'::public.user_role
       and p.account_status = 'ACTIVE'
-      and (storage.foldername(name))[1] = auth.uid()::text
   )
 )
 with check (
@@ -136,9 +124,7 @@ with check (
   or exists (
     select 1 from public.profiles p
     where p.id = auth.uid()
-      and p.role = 'CREATOR'::public.user_role
       and p.account_status = 'ACTIVE'
-      and (storage.foldername(name))[1] = auth.uid()::text
   )
 );
 
@@ -151,9 +137,7 @@ using (
   or exists (
     select 1 from public.profiles p
     where p.id = auth.uid()
-      and p.role = 'CREATOR'::public.user_role
       and p.account_status = 'ACTIVE'
-      and (storage.foldername(name))[1] = auth.uid()::text
   )
 );
 
@@ -163,7 +147,7 @@ commit;
 -- 1. Confirmar nombres y definiciones de políticas actuales antes de aplicar.
 -- 2. Las políticas RESTRICTIVE se combinan con AND y se suman a las políticas
 --    permisivas existentes. No sustituyen las comprobaciones de propiedad.
--- 3. Probar con una cuenta CREATOR activa, una cerrada y una cuenta CUSTOMER.
+-- 3. Probar con una cuenta CREATOR activa, una cerrada, una CUSTOMER y ADMIN; los permisos concretos siguen dependiendo de las políticas permisivas existentes.
 -- 4. La lectura pública de publicaciones y archivos debe seguir funcionando.
 -- 5. Esta migración no cierra Auth ni gestiona pedidos pendientes; eso corresponde
 --    a la Edge Function y a los módulos de ventas/subastas cuando existan.
