@@ -35,6 +35,7 @@ Las ventas, los pagos, las subastas, Writer/Literature, la administración y la 
 - [Hoja de ruta y dependencias](docs/IMPLEMENTATION_ROADMAP.md)
 - [Plan de pruebas de aceptación](docs/ACCEPTANCE_TEST_PLAN.md)
 - [Consultas SQL de auditoría de solo lectura](docs/SQL_SECURITY_AUDIT_READ_ONLY.sql)
+- [Borrador SQL de Writer y modalidades (NO EJECUTADO)](docs/PROPOSED_SCHEMA_WRITER_MODALITIES.sql)
 
 ## Criterios de desarrollo
 
