@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://mikustreet1313.github.io",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
@@ -14,6 +14,11 @@ function reply(status: number, body: Record<string, unknown>) {
 }
 
 Deno.serve(async (req: Request) => {
+  const origin = req.headers.get("Origin");
+  if (origin && origin !== "https://mikustreet1313.github.io") {
+    return reply(403, { error: "Origin not allowed" });
+  }
+
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
