@@ -83,7 +83,7 @@ with check (
   exists (
     select 1 from public.profiles p
     where p.id = auth.uid()
-      and p.role = 'CREATOR'::user_role
+      and p.role = 'CREATOR'::public.user_role
       and p.account_status = 'ACTIVE'
   )
 );
