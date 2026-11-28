@@ -188,7 +188,7 @@
 <dialog id="mediaLightbox" class="media-lightbox"><button type="button" id="closeMediaLightbox" aria-label="Cerrar">×</button><img id="mediaLightboxImage" alt="Vista ampliada"></dialog>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<section id="my-wall" class="my-wall">
+<section id="my-wall" class="my-wall hidden" style="display:none">
   <div class="my-wall-header">
     <span>THE WALL !</span>
     <h2>MY WALL</h2>
@@ -381,8 +381,10 @@ function showMyWall(user){
   const wall=$('#my-wall'), navLink=$('#myWallNav'), navLogout=$('#navLogoutBtn');
   const accountRole=String(user?.user_metadata?.role||'').toUpperCase();
   if(!user||!['CREATOR','CUSTOMER'].includes(accountRole)){
-    wall.style.display='none';navLink.style.display='none';navLogout.style.display='none';return;
+    wall.classList.add('hidden');wall.style.display='none';
+    navLink.style.display='none';navLogout.style.display='none';return;
   }
+  wall.classList.remove('hidden');
   navLink.style.display='inline';
   navLogout.style.display='inline';
   wall.style.display='block';
