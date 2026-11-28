@@ -377,16 +377,10 @@ function showStatus(selector,message,isError=false){
   el.textContent=message;
   el.style.color=isError?'#b42318':'';
 }
-async function showMyWall(user){
+function showMyWall(user){
   const wall=$('#my-wall'), navLink=$('#myWallNav');
-  if(!user){wall.style.display='none';navLink.style.display='none';return;}
-  let accountRole=user.user_metadata?.role || null;
-  try{
-    const {data:profile}=await supabaseClient.from('profiles').select('role,display_name').eq('id',user.id).maybeSingle();
-    if(profile?.role)accountRole=String(profile.role).toUpperCase();
-    if(profile?.display_name)user.user_metadata.display_name=profile.display_name;
-  }catch(error){console.warn('No se pudo consultar el perfil:',error);}
-  if(!['CREATOR','CUSTOMER'].includes(String(accountRole||'').toUpperCase())){
+  const accountRole=String(user?.user_metadata?.role||'').toUpperCase();
+  if(!user||!['CREATOR','CUSTOMER'].includes(accountRole)){
     wall.style.display='none';navLink.style.display='none';return;
   }
   navLink.style.display='inline';
