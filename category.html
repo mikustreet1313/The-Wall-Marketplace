@@ -61,7 +61,7 @@ document.querySelector('#pageIntro').textContent=category==='All creativity'?'Ex
 document.querySelectorAll('.category-links a').forEach(a=>{if(a.dataset.name===category)a.classList.add('active')});
 const status=document.querySelector('#status'),posts=document.querySelector('#posts');
 function make(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el}
-async function signedMedia(path){const {data,error}=await db.storage.from('wall media').createSignedUrl(path,3600);return error?null:data?.signedUrl||null}
+async function signedMedia(path){if(/^https?:\\/\\//i.test(path||''))return path;const {data,error}=await db.storage.from('wall media').createSignedUrl(path,3600);return error?null:data?.signedUrl||null}
 async function render(){
  try{
   let query=db.from('wall_posts').select('id,title,content,category,media_url,created_at,visibility,scheduled_at').in('visibility',['PUBLIC','SCHEDULED']).order('created_at',{ascending:false});
