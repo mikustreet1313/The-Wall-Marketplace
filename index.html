@@ -507,7 +507,9 @@ function addMediaGallery(container,mediaItems,title){
 $('#closeMediaLightbox').addEventListener('click',()=>$('#mediaLightbox').close());
 $('#mediaLightbox').addEventListener('click',e=>{if(e.target===$('#mediaLightbox'))$('#mediaLightbox').close();});
 
+let publicPostsLoadVersion = 0;
 async function loadPublicPosts(){
+  const loadVersion = ++publicPostsLoadVersion;
   const list=$('#publicPostsList');
   const status=$('#publicPostsStatus');
   if(!list||!status)return;
@@ -526,15 +528,21 @@ async function loadPublicPosts(){
         .lte('scheduled_at',now)
         .order('created_at',{ascending:false})
     ]);
+    if(loadVersion !== publicPostsLoadVersion)return;
     if(publicResult.error)throw publicResult.error;
     if(scheduledResult.error)throw scheduledResult.error;
-    const posts=[...(publicResult.data||[]),...(scheduledResult.data||[])]
+    const uniquePosts = new Map();
+    for(const post of [...(publicResult.data||[]),...(scheduledResult.data||[])]) {
+      uniquePosts.set(post.id, post);
+    }
+    const posts=[...uniquePosts.values()]
       .sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
     if(!posts.length){status.textContent='Aún no hay creaciones públicas. ¡Sé el primero en compartir!';return;}
     const postIds=posts.map(post=>post.id);
     const mediaResult=await supabaseClient.from('wall_post_media')
       .select('post_id,media_url,media_type,display_order')
       .in('post_id',postIds).order('display_order',{ascending:true});
+    if(loadVersion !== publicPostsLoadVersion)return;
     if(mediaResult.error)throw mediaResult.error;
     const mediaByPost={};
     for(const media of (mediaResult.data||[])){
@@ -544,6 +552,7 @@ async function loadPublicPosts(){
     }
     const {data:{user:viewer}}=await supabaseClient.auth.getUser();
     const {data:countRows,error:countError}=await supabaseClient.rpc('get_public_post_interaction_counts',{post_ids:postIds});
+    if(loadVersion !== publicPostsLoadVersion)return;
     if(countError)throw new Error('No se pudieron consultar las interacciones. Comprueba la función de estadísticas en Supabase: '+countError.message);
     const countsByPost={};
     for(const row of (countRows||[]))countsByPost[row.post_id]=row;
@@ -590,7 +599,11 @@ async function loadPublicPosts(){
       list.append(card);
     }
     status.textContent=`${posts.length} ${posts.length===1?'CREATION':'CREATIONS'} ON THE WALL`;
-  }catch(error){status.textContent='No se pudieron cargar las publicaciones: '+(error.message||'Error desconocido');status.style.color='#b42318';}
+  }catch(error){
+    if(loadVersion !== publicPostsLoadVersion)return;
+    status.textContent='No se pudieron cargar las publicaciones: '+(error.message||'Error desconocido');
+    status.style.color='#b42318';
+  }
 }
 
 async function loadMyCreations(){
