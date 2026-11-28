@@ -355,6 +355,10 @@ function showRoleChooser(){
   $$('.role').forEach(b=>b.classList.remove('selected'));
 }
 $$('.role').forEach(btn=>btn.addEventListener('click',()=>{
+  if(btn.dataset.role==='creator'){
+    window.location.href='creator.html';
+    return;
+  }
   role=btn.dataset.role;
   $('#roleChooser').classList.add('hidden');
   $('#creatorForm').classList.toggle('hidden',role!=='creator');
