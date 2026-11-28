@@ -164,6 +164,10 @@ create policy "Creators create their own literature drafts"
 on public.literature_works for insert to authenticated
 with check (
   creator_id = (select auth.uid())
+  and exists (
+    select 1 from public.profiles me
+    where me.id = (select auth.uid()) and me.role::text = 'CREATOR'
+  )
   and status = 'DRAFT'
   and visibility = 'PRIVATE'
   and published_at is null
@@ -172,13 +176,31 @@ with check (
 drop policy if exists "Creators update their own literature" on public.literature_works;
 create policy "Creators update their own literature"
 on public.literature_works for update to authenticated
-using (creator_id = (select auth.uid()))
-with check (creator_id = (select auth.uid()));
+using (
+  creator_id = (select auth.uid())
+  and exists (
+    select 1 from public.profiles me
+    where me.id = (select auth.uid()) and me.role::text = 'CREATOR'
+  )
+)
+with check (
+  creator_id = (select auth.uid())
+  and exists (
+    select 1 from public.profiles me
+    where me.id = (select auth.uid()) and me.role::text = 'CREATOR'
+  )
+);
 
 drop policy if exists "Creators delete their own literature" on public.literature_works;
 create policy "Creators delete their own literature"
 on public.literature_works for delete to authenticated
-using (creator_id = (select auth.uid()));
+using (
+  creator_id = (select auth.uid())
+  and exists (
+    select 1 from public.profiles me
+    where me.id = (select auth.uid()) and me.role::text = 'CREATOR'
+  )
+);
 
 drop policy if exists "Admins moderate literature" on public.literature_works;
 create policy "Admins moderate literature"
