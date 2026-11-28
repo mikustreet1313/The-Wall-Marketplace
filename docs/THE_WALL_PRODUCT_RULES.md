@@ -18,6 +18,8 @@ Documento maestro de requisitos acordados. Sirve para evitar que futuras modific
 - Un cliente puede explorar las publicaciones públicas e interactuar con ellas según las reglas de cada módulo.
 - Las acciones administrativas deben quedar reservadas a ADMIN y no deben confiar en controles visuales del navegador: deben validarse también en Supabase.
 - Los datos privados de una cuenta no deben hacerse públicos por el mero hecho de existir un perfil.
+- El creador puede solicitar el cierre/eliminación de su cuenta. Para proteger la autoría y el legado artístico, el cierre conservará su nombre artístico y sus publicaciones públicas, pero estas pasarán a ser de consulta: no se podrán comprar, pujar ni iniciar nuevas transacciones sobre ellas. El perfil debe identificarse claramente como inactivo y el creador perderá el acceso de inicio de sesión y la capacidad de editar contenido.
+- El cierre de cuenta de creador debe implementarse como un proceso seguro de baja lógica/retirada de acceso, no como un borrado directo desde el navegador. Debe bloquear nuevas ventas y subastas en el servidor/base de datos, cancelar o resolver de forma segura operaciones pendientes y conservar solo los datos necesarios para autoría, obligaciones legales y seguridad. La política de eliminación de cuentas CUSTOMER se definirá por separado.
 
 ## 3. Obras y publicaciones
 
