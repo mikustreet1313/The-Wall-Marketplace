@@ -80,7 +80,7 @@ async function loadPosts(){
   const gallery=files.map(f=>f.type==='video'
    ? '<video class="post-media" controls preload="metadata" src="'+escapeHtml(f.url)+'"></video>'
    : '<img class="post-media" loading="lazy" src="'+escapeHtml(f.url)+'" alt="Imagen de '+escapeHtml(p.title||'la creación')+'">').join('');
-  return '<article class="post-card" data-post-id="'+escapeHtml(p.id)+'"><div class="post"><strong>'+escapeHtml(p.title||'Sin título')+'</strong><small>'+escapeHtml(p.category||'Sin categoría')+' · '+escapeHtml(p.visibility||'')+'</small></div>'+(gallery?'<div class="post-gallery">'+gallery+'</div>':'<p class="empty">Esta creación todavía no tiene archivos multimedia.</p>')+'<div class="post-actions"><button type="button" class="edit-toggle">Editar obra</button><button type="button" class="delete-work">Eliminar obra</button></div><form class="edit-work" hidden><label>Título</label><input name="title" maxlength="160" required value="'+escapeHtml(p.title||'')+'"><label>Modalidad artística</label><input name="category" maxlength="100" required value="'+escapeHtml(p.category||'')+'"><label>Descripción</label><textarea name="content" rows="4" maxlength="10000" required>'+escapeHtml(p.content||'')+'</textarea><label>Visibilidad</label><select name="visibility"><option value="PUBLIC" '+(p.visibility==='PUBLIC'?'selected':'')+'>Pública</option><option value="PRIVATE" '+(p.visibility==='PRIVATE'?'selected':'')+'>Privada</option><option value="SCHEDULED" '+(p.visibility==='SCHEDULED'?'selected':'')+'>Programada</option></select><div class="post-actions"><button type="submit">Guardar cambios</button><button type="button" class="cancel-edit">Cancelar</button></div><p class="empty edit-message" role="status"></p></form></article>';
+  return '<article class="post-card" data-post-id="'+escapeHtml(p.id)+'"><div class="post"><strong>'+escapeHtml(p.title||'Sin título')+'</strong><small>'+escapeHtml(p.category||'Sin categoría')+' · '+escapeHtml(p.visibility||'')+'</small></div>'+(gallery?'<div class="post-gallery">'+gallery+'</div>':'<p class="empty">Esta creación todavía no tiene archivos multimedia.</p>')+'<div class="post-actions"><button type="button" class="edit-toggle">Editar obra</button><button type="button" class="delete-work">Eliminar obra</button></div><form class="edit-work" hidden><label>Título</label><input name="title" maxlength="160" required value="'+escapeHtml(p.title||'')+'"><label>Modalidad artística</label><input name="category" maxlength="100" required value="'+escapeHtml(p.category||'')+'"><label>Descripción</label><textarea name="content" rows="4" maxlength="10000" required>'+escapeHtml(p.content||'')+'</textarea><label>Visibilidad</label><select name="visibility"><option value="PUBLIC" '+(p.visibility==='PUBLIC'?'selected':'')+'>Pública</option><option value="PRIVATE" '+(p.visibility==='PRIVATE'?'selected':'')+'>Privada</option><option value="SCHEDULED" '+(p.visibility==='SCHEDULED'?'selected':'')+'>Programada</option></select><label>Añadir fotos o vídeos (se conservarán los archivos actuales)</label><input name="extraMedia" type="file" accept="image/*,video/*" multiple><div class="post-actions"><button type="submit">Guardar cambios</button><button type="button" class="cancel-edit">Cancelar</button></div><p class="empty edit-message" role="status"></p></form></article>';
  }).join('');
  if(mediaError)el('postList').insertAdjacentHTML('beforeend','<p class="empty">No se pudo cargar la galería: '+escapeHtml(mediaError.message)+'</p>');
 }
@@ -149,11 +149,35 @@ el('postList').addEventListener('submit',async event=>{
  const form=event.target.closest('.edit-work');if(!form)return;event.preventDefault();
  const card=form.closest('.post-card'),id=card.dataset.postId,btn=form.querySelector('button[type="submit"]'),msg=form.querySelector('.edit-message');
  const values={title:form.elements.title.value.trim(),category:form.elements.category.value.trim(),content:form.elements.content.value.trim(),visibility:form.elements.visibility.value};
+ const files=Array.from(form.elements.extraMedia.files||[]);
  if(!values.title||!values.category||!values.content){msg.textContent='Completa todos los campos.';return;}
- btn.disabled=true;btn.textContent='Guardando…';
- const {error}=await db.from('wall_posts').update(values).eq('id',id).eq('creator_id',currentUser.id);
+ if(files.some(file=>!file.type.startsWith('image/')&&!file.type.startsWith('video/'))){msg.textContent='Solo puedes añadir imágenes o vídeos.';return;}
+ btn.disabled=true;btn.textContent='Guardando…';msg.textContent='';
+ const uploadedPaths=[];
+ for(let i=0;i<files.length;i++){
+  const file=files[i],safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+  const path=currentUser.id+'/'+id+'/'+crypto.randomUUID()+'-'+safeName;
+  const {error:uploadError}=await db.storage.from('wall media').upload(path,file,{cacheControl:'3600',upsert:false});
+  if(uploadError){
+   if(uploadedPaths.length)await db.storage.from('wall media').remove(uploadedPaths);
+   btn.disabled=false;btn.textContent='Guardar cambios';msg.textContent='No se pudieron añadir los archivos: '+uploadError.message;return;
+  }
+  uploadedPaths.push(path);
+ }
+ const {error:updateError}=await db.from('wall_posts').update(values).eq('id',id).eq('creator_id',currentUser.id);
+ if(updateError){
+  if(uploadedPaths.length)await db.storage.from('wall media').remove(uploadedPaths);
+  btn.disabled=false;btn.textContent='Guardar cambios';msg.textContent='No se pudieron guardar los cambios: '+updateError.message;return;
+ }
+ if(uploadedPaths.length){
+  const mediaRows=files.map((file,i)=>({post_id:id,creator_id:currentUser.id,media_url:uploadedPaths[i],media_type:file.type.startsWith('video/')?'video':'image',display_order:Date.now()+i}));
+  const {error:mediaError}=await db.from('wall_post_media').insert(mediaRows);
+  if(mediaError){
+   await db.storage.from('wall media').remove(uploadedPaths);
+   btn.disabled=false;btn.textContent='Guardar cambios';msg.textContent='Los datos de la obra se guardaron, pero no se pudo añadir la galería: '+mediaError.message;return;
+  }
+ }
  btn.disabled=false;btn.textContent='Guardar cambios';
- if(error){msg.textContent='No se pudieron guardar los cambios: '+error.message;return;}
  await loadPosts();
 });
 el('logoutBtn').addEventListener('click',async()=>{const {error}=await db.auth.signOut();if(!error)window.location.href='creator.html';else alert('No se pudo cerrar sesión: '+error.message);});
